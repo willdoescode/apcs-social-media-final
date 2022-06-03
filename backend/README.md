@@ -12,7 +12,7 @@ postgresql
 
 #### Run instructions
 
-```
+```sh
 $ docker compose up
 
 $ cargo install diesel_cli
