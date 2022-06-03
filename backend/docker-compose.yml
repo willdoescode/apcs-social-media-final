@@ -1,0 +1,12 @@
+version: "3"
+services:
+  database:
+    image: "postgres:latest"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=javasucks
+      - POSTGRES_PASSWORD=javasucks
+      - POSTGRES_DB=javasucks
+    volumes:
+      - ./db/:/var/lib/postgresql/data/
