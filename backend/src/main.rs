@@ -1,10 +1,18 @@
+#[macro_use]
+extern crate diesel;
+
+#[macro_use]
+extern crate serde;
+
 mod db;
 mod get;
+mod models;
 mod post;
+mod schema;
 
 use dotenv::dotenv;
 
-use actix_web::{middleware::Logger, App, HttpServer};
+use actix_web::{middleware::Logger, web, App, HttpServer};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -30,7 +38,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         let app = App::new()
-            .app_data(pool.clone())
+            .app_data(web::Data::new(pool.clone()))
             .wrap(Logger::default())
             .configure(get::get_services)
             .configure(post::post_services);

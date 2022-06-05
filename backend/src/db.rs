@@ -11,3 +11,34 @@ pub fn pool() -> DB {
         .build(manager)
         .expect("Could not build PostgreSQL connection pool.")
 }
+
+// DB actions
+pub mod actions {
+    use super::*;
+    use crate::models::*;
+    use diesel::prelude::*;
+
+    pub mod users {
+        use super::*;
+        use crate::schema::users::dsl::*;
+
+        // Immutable users actions
+        pub mod immut {
+            use super::*;
+            pub fn get_users(name: &str, amount: i64, conn: &PgConnection) -> Vec<User> {
+                let res = users
+                    .filter(username.like(name))
+                    .limit(amount)
+                    .load::<User>(conn)
+                    .expect("Error loading user");
+
+                res
+            }
+        }
+
+        // Mutable users actions
+        pub mod muta {
+            //
+        }
+    }
+}
