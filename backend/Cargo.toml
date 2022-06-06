@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+actix-cors = "0.6.1"
 actix-web = "4"
 diesel = { version = "1.4.8", features = ["postgres", "r2d2"] }
 dotenv = "0.15.0"

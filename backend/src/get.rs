@@ -18,24 +18,19 @@ async fn echo(req_body: String) -> impl Responder {
     HttpResponse::Ok().body(req_body)
 }
 
-#[derive(Deserialize)]
-struct Username {
-    username: String,
-}
-
-#[get("/get_user")]
-async fn get_user_by_username(db: web::Data<DB>, username: web::Json<Username>) -> impl Responder {
+#[get("/get_user/{username}")]
+async fn get_user_by_username(db: web::Data<DB>, username: web::Path<String>) -> impl Responder {
     let db_conn = db.get().expect("Error getting db conn");
-    let maybe_user = db::actions::users::immut::get_users(&db_conn, &username.username, 1);
+    let maybe_user = db::actions::users::immut::get_users(&db_conn, &username, 1);
 
     HttpResponse::Ok().json(maybe_user.first())
 }
 
-#[get("/get_posts")]
-async fn get_posts_by_user(db: web::Data<DB>, username: web::Json<Username>) -> impl Responder {
+#[get("/get_posts/{username}")]
+async fn get_posts_by_user(db: web::Data<DB>, username: web::Path<String>) -> impl Responder {
     let db_conn = db.get().expect("Error getting db conn");
 
-    let users = db::actions::users::immut::get_users(&db_conn, &username.username, 1);
+    let users = db::actions::users::immut::get_users(&db_conn, &username, 1);
 
     let user = users.first();
     let user = match user {
