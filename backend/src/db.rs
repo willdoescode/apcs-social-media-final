@@ -1,6 +1,5 @@
 use diesel::{r2d2::ConnectionManager, PgConnection};
 use r2d2::Pool;
-use sha2::Sha256;
 
 pub type DB = Pool<ConnectionManager<PgConnection>>;
 
@@ -17,7 +16,7 @@ pub fn pool() -> DB {
 pub mod actions {
     use super::*;
 
-    use diesel::{Associations, BelongingToDsl, Identifiable, Queryable};
+    use diesel::BelongingToDsl;
 
     use crate::models::*;
     use diesel::prelude::*;
@@ -79,7 +78,15 @@ pub mod actions {
         pub mod muta {
             use super::*;
 
-            //
+            pub fn create_post(conn: &PgConnection, req_body: &NewPost) -> Post {
+                match diesel::insert_into(posts)
+                    .values(req_body)
+                    .get_result::<Post>(conn)
+                {
+                    Ok(post) => post,
+                    Err(e) => panic!("Error creating post: {}", e),
+                }
+            }
         }
     }
 }

@@ -4,15 +4,16 @@ use actix_web::{
     HttpResponse, Responder,
 };
 
-use crate::db;
-use crate::db::DB;
 use crate::models::NewUser;
+use crate::{db, models::Post};
+use crate::{db::DB, models::NewPost};
 
 use sha2::{Digest, Sha256};
 
 pub fn post_services(cfg: &mut ServiceConfig) {
     cfg.service(echo);
     cfg.service(create_user);
+    cfg.service(create_post);
 }
 
 #[post("/echo")]
@@ -53,7 +54,46 @@ async fn create_user(
     HttpResponse::Ok().json(maybe_user)
 }
 
+#[derive(Deserialize)]
+struct CreatePostInfo {
+    username: String,
+    password: String,
+    title: String,
+    body: String,
+}
+
 #[post("/create_post")]
-async fn create_post(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
+async fn create_post(
+    db: web::Data<DB>,
+    login_user_info: web::Json<CreatePostInfo>,
+) -> impl Responder {
+    let db_conn = db.get().expect("Error getting db conn");
+
+    let users = db::actions::users::immut::get_users(&db_conn, &login_user_info.username, 1);
+
+    let user = users.first();
+    let user = match user {
+        Some(user) => user,
+        None => return HttpResponse::Ok().json(None as Option<Post>),
+    };
+
+    let mut hasher = Sha256::new();
+    hasher.update(&login_user_info.password);
+
+    let hashed_password: String = format!("{:X}", hasher.finalize());
+
+    if hashed_password != user.password {
+        return HttpResponse::Ok().json(None as Option<Post>);
+    }
+
+    let new_post = db::actions::posts::muta::create_post(
+        &db_conn,
+        &NewPost {
+            title: &login_user_info.title,
+            body: &login_user_info.body,
+            author: &user.username,
+        },
+    );
+
+    HttpResponse::Ok().json(new_post)
 }

@@ -10,6 +10,7 @@ use crate::{db, models::Post};
 pub fn get_services(cfg: &mut ServiceConfig) {
     cfg.service(echo);
     cfg.service(get_user_by_username);
+    cfg.service(get_posts_by_user);
 }
 
 #[get("/echo")]
@@ -31,7 +32,7 @@ async fn get_user_by_username(db: web::Data<DB>, username: web::Json<Username>) 
 }
 
 #[get("/get_posts")]
-async fn get_posts_from_user(db: web::Data<DB>, username: web::Json<Username>) -> impl Responder {
+async fn get_posts_by_user(db: web::Data<DB>, username: web::Json<Username>) -> impl Responder {
     let db_conn = db.get().expect("Error getting db conn");
 
     let users = db::actions::users::immut::get_users(&db_conn, &username.username, 1);
