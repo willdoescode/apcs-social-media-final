@@ -4,7 +4,7 @@ use actix_web::{
     HttpResponse, Responder,
 };
 
-use crate::models::NewUser;
+use crate::models::{NewUser, User};
 use crate::{db, models::Post};
 use crate::{db::DB, models::NewPost};
 
@@ -34,6 +34,11 @@ async fn create_user(
     create_user_info: web::Json<CreateUserInfo>,
 ) -> impl Responder {
     let db_conn = db.get().expect("Error getting db conn");
+
+    let users = db::actions::users::immut::get_users(&db_conn, &create_user_info.username, 1);
+    if !users.is_empty() {
+        return HttpResponse::Ok().json(None as Option<User>);
+    }
 
     let unhashed = &create_user_info.password;
 
