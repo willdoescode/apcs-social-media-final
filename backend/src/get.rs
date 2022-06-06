@@ -25,7 +25,13 @@ struct Username {
 #[get("/get_user")]
 async fn get_user_by_username(db: web::Data<DB>, username: web::Json<Username>) -> impl Responder {
     let db_conn = db.get().expect("Error getting db conn");
-    let maybe_user = db::actions::users::immut::get_users(&username.username, 1, &db_conn);
+    let maybe_user = db::actions::users::immut::get_users(&db_conn, &username.username, 1);
 
     HttpResponse::Ok().json(maybe_user.first())
+}
+
+#[get("/get_posts")]
+async fn get_posts_from_user(db: web::Data<DB>, username: web::Json<Username>) -> impl Responder {
+    // not implemented yet
+    HttpResponse::Ok().json("")
 }

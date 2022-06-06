@@ -1,5 +1,6 @@
 use diesel::{r2d2::ConnectionManager, PgConnection};
 use r2d2::Pool;
+use sha2::Sha256;
 
 pub type DB = Pool<ConnectionManager<PgConnection>>;
 
@@ -25,7 +26,8 @@ pub mod actions {
         // Immutable users actions
         pub mod immut {
             use super::*;
-            pub fn get_users(name: &str, amount: i64, conn: &PgConnection) -> Vec<User> {
+
+            pub fn get_users(conn: &PgConnection, name: &str, amount: i64) -> Vec<User> {
                 let res = users
                     .filter(username.like(name))
                     .limit(amount)
@@ -38,7 +40,17 @@ pub mod actions {
 
         // Mutable users actions
         pub mod muta {
-            //
+            use super::*;
+
+            pub fn create_user(conn: &PgConnection, req_body: &NewUser) -> Option<User> {
+                match diesel::insert_into(users)
+                    .values(req_body)
+                    .get_result::<User>(conn)
+                {
+                    Ok(user) => Some(user),
+                    Err(_) => None,
+                }
+            }
         }
     }
 }
