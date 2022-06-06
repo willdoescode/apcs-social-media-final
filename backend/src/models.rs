@@ -3,7 +3,8 @@ use crate::schema::{posts, users};
 
 use diesel::{Associations, Identifiable, Queryable};
 
-#[derive(Queryable, Clone, Serialize, Deserialize)]
+#[derive(Queryable, Identifiable, Associations, Clone, Serialize, Deserialize)]
+#[primary_key(username)]
 pub struct User {
     pub username: String,
     pub bio: Option<String>,

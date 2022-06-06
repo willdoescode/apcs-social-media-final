@@ -16,6 +16,9 @@ pub fn pool() -> DB {
 // DB actions
 pub mod actions {
     use super::*;
+
+    use diesel::{Associations, BelongingToDsl, Identifiable, Queryable};
+
     use crate::models::*;
     use diesel::prelude::*;
 
@@ -51,6 +54,32 @@ pub mod actions {
                     Err(e) => panic!("Error creating user: {}", e),
                 }
             }
+        }
+    }
+
+    pub mod posts {
+        use super::*;
+        use crate::schema::posts::dsl::*;
+
+        // Immutable posts actions
+        pub mod immut {
+            use super::*;
+
+            //
+            pub fn get_posts_from_user(conn: &PgConnection, user: &User) -> Vec<Post> {
+                let res = Post::belonging_to(user)
+                    .load::<Post>(conn)
+                    .expect("Error loading posts");
+
+                res
+            }
+        }
+
+        // Mutable posts actions
+        pub mod muta {
+            use super::*;
+
+            //
         }
     }
 }
