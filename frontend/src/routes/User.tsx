@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
+
+import './User.css'
 
 interface UserI {
   username: string;
@@ -43,17 +45,21 @@ const User = () => {
 
   return (
     <div>
+    <Link className="back" to="/">back</Link>
+
       {user && 
         <div>
           <h1>{user.username}</h1>
-          <h2>{user.bio}</h2>
+          <h3>{user.bio}</h3>
         </div>
       }
 
-      {posts && posts.map(post => <div key={post.id}>
-        {post.title}
+      <h1>Posts:</h1>
+
+      {posts && posts.map(post => <div className="post" key={post.id}>
+        <h3>{post.title}</h3>
         <br />
-        {post.body}
+        <h4>{post.body}</h4>
         </div>)}
     </div>
   );
