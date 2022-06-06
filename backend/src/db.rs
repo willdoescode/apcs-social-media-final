@@ -42,13 +42,13 @@ pub mod actions {
         pub mod muta {
             use super::*;
 
-            pub fn create_user(conn: &PgConnection, req_body: &NewUser) -> Option<User> {
+            pub fn create_user(conn: &PgConnection, req_body: &NewUser) -> User {
                 match diesel::insert_into(users)
                     .values(req_body)
                     .get_result::<User>(conn)
                 {
-                    Ok(user) => Some(user),
-                    Err(_) => None,
+                    Ok(user) => user,
+                    Err(e) => panic!("Error creating user: {}", e),
                 }
             }
         }
