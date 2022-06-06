@@ -1,10 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './App.css';
 
 const App = () => {
   return (
     <div>
-      <h1>Hello world</h1>
+      <Link className='url' to="/createuser">Create User</Link>
+      <Link className='url' to="/post">Create Post</Link>
+      <Link className='url' to="/user">Find User</Link>
     </div>
   );
 }

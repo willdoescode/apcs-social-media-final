@@ -1,0 +1,22 @@
+div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  text-align: center;
+  min-height: 100%;
+  align-items: center;
+}
+
+.url {
+  padding: 10px;
+  font-size: 2em;
+  color: #416165;
+  text-decoration: none;
+}
+
+.url:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}

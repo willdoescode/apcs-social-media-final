@@ -1,0 +1,26 @@
+input[type=text] {
+}
+
+input[type=password] {
+}
+
+input {
+  padding:10px;
+  border-radius:10px;
+
+  margin:20px 20px 0 0;
+  border:0;
+  background-color: #D9DBF1;
+}
+
+.back {
+  padding: 10px;
+  font-size: 1.5em;
+  color: #416165;
+  text-decoration: none;
+}
+
+.back:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}

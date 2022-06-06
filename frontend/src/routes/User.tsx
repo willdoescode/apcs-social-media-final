@@ -23,6 +23,7 @@ const User = () => {
 
   useEffect(() => {
     getUser();
+    getPosts();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -33,14 +34,27 @@ const User = () => {
       })
   }
 
+  const getPosts = () => {
+    axios.get(`http://127.0.0.1:8080/get_posts/${params.username}`)
+      .then(res => {
+        setPosts(res.data);
+      }) 
+    }
+
   return (
     <div>
-      <h1>{user && 
-      <div>
-        <h1>{user.username}</h1>
-        <h2>{user.bio}</h2>
-      </div>
-      }</h1>
+      {user && 
+        <div>
+          <h1>{user.username}</h1>
+          <h2>{user.bio}</h2>
+        </div>
+      }
+
+      {posts && posts.map(post => <div key={post.id}>
+        {post.title}
+        <br />
+        {post.body}
+        </div>)}
     </div>
   );
 }
