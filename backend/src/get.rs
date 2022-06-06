@@ -4,8 +4,8 @@ use actix_web::{
     HttpResponse, Responder,
 };
 
-use crate::db;
 use crate::db::DB;
+use crate::{db, models::Post};
 
 pub fn get_services(cfg: &mut ServiceConfig) {
     cfg.service(echo);
@@ -32,6 +32,17 @@ async fn get_user_by_username(db: web::Data<DB>, username: web::Json<Username>) 
 
 #[get("/get_posts")]
 async fn get_posts_from_user(db: web::Data<DB>, username: web::Json<Username>) -> impl Responder {
-    // not implemented yet
-    HttpResponse::Ok().json("")
+    let db_conn = db.get().expect("Error getting db conn");
+
+    let users = db::actions::users::immut::get_users(&db_conn, &username.username, 1);
+
+    let user = users.first();
+    let user = match user {
+        Some(user) => user,
+        None => return HttpResponse::Ok().json(None as Option<Vec<Post>>),
+    };
+
+    let posts = db::actions::posts::immut::get_posts_from_user(&db_conn, user);
+
+    HttpResponse::Ok().json(posts)
 }
